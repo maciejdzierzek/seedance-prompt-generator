@@ -1,0 +1,24 @@
+{
+  "name": "seedance-prompt-generator",
+  "displayName": "Seedance Prompt Generator",
+  "version": "1.0.0",
+  "description": "Write and improve prompts for ByteDance Seedance 2.0 video generation. Covers the four task types (multimodal reference, video editing, video extension, combined), the shot-by-shot storyboard format the model expects, subject definition and binding to reference assets, the official symbol conventions for dialogue, sound effects, music and subtitles, camera language, constraint words, and fixes for character ID drift, unwanted subtitles and style drift.",
+  "author": {
+    "name": "Maciej Dzierżek",
+    "url": "https://maciejdzierzek.com"
+  },
+  "homepage": "https://maciejdzierzek.com/narzedzia",
+  "repository": "https://github.com/maciejdzierzek/seedance-prompt-generator",
+  "license": "MIT",
+  "keywords": [
+    "seedance",
+    "bytedance",
+    "dreamina",
+    "video-generation",
+    "ai-video",
+    "prompt-engineering",
+    "modelark",
+    "lip-sync",
+    "multi-shot"
+  ]
+}

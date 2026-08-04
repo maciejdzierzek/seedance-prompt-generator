@@ -1,0 +1,61 @@
+{
+  "skill": "seedance",
+  "description": "Trigger accuracy evaluation for the seedance skill. Each entry is a user prompt that should or should not trigger this skill.",
+  "version": "1.0",
+  "should_trigger": [
+    {
+      "query": "Write me a Seedance 2.0 prompt for a three-shot dialogue scene between two people.",
+      "why": "Canonical multi-shot storyboard prompt request."
+    },
+    {
+      "query": "My character's face keeps changing halfway through the Seedance video.",
+      "why": "Official FAQ: ID drift, fixed with a dedicated headshot placed first and no multi-view sheets."
+    },
+    {
+      "query": "Seedance keeps adding subtitles I never asked for.",
+      "why": "Official FAQ: constraint words, strip text from assets, generate landscape."
+    },
+    {
+      "query": "How do I edit an existing video with Seedance instead of generating a new one?",
+      "why": "Edit task has its own sentence pattern and the 'do not say reference' gotcha."
+    },
+    {
+      "query": "Which Seedance model do I need for 4K output?",
+      "why": "Only Seedance 2.0 does 4K, 10-bit H.265, concurrency 1."
+    },
+    {
+      "query": "How do I write dialogue so the lip sync works in a ByteDance video model?",
+      "why": "Dialogue goes in curly braces; language must be marked if not Chinese or English."
+    },
+    {
+      "query": "Can I extend a clip I already generated and keep it seamless?",
+      "why": "Extend task plus the documented 6-frame / 1-frame trim recipe for seams."
+    },
+    {
+      "query": "How many reference images should I give dreamina-seedance-2-0-fast?",
+      "why": "Limits are 0-9 images but the vendor recommends 4-5 assets total with functional roles."
+    }
+  ],
+  "should_not_trigger": [
+    {
+      "query": "Write me a Kling AI prompt for animating this photo.",
+      "why": "Different vendor - kling-ai skill."
+    },
+    {
+      "query": "Generate a still image of a mountain landscape.",
+      "why": "Image generation, not video."
+    },
+    {
+      "query": "Edit this video in Premiere Pro - how do I add a cross dissolve?",
+      "why": "Conventional NLE editing, not AI generation."
+    },
+    {
+      "query": "What's the best codec for archiving footage?",
+      "why": "Post-production plumbing, not prompt writing."
+    },
+    {
+      "query": "Write a script for a 30 second ad.",
+      "why": "Copywriting; no model or prompt involved."
+    }
+  ]
+}
