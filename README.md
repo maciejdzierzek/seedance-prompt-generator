@@ -3,8 +3,11 @@
 > A Claude skill for writing prompts for **ByteDance Seedance 2.0** video generation.
 > Works with Claude.ai, Claude Desktop, and Claude Code.
 
+[![Live Generator](https://img.shields.io/badge/Live_Generator-maciejdzierzek.com-blue)](https://maciejdzierzek.com/narzedzia/generator-promptow/?model=seedance)
 [![Claude Skill](https://img.shields.io/badge/Claude-Skill-orange)](https://claude.ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**Prefer a form over a conversation?** The same four models have a web generator, no install and no account: [maciejdzierzek.com/narzedzia/generator-promptow](https://maciejdzierzek.com/narzedzia/generator-promptow/?model=seedance)
 
 ## What is this?
 
@@ -93,7 +96,7 @@ Every factual claim is verified against ByteDance/BytePlus-controlled documentat
 
 ## About
 
-Built by [Maciej Dzierżek](https://maciejdzierzek.com). All AI tools: [maciejdzierzek.com/narzedzia](https://maciejdzierzek.com/narzedzia)
+Built by [Maciej Dzierżek](https://maciejdzierzek.com). All AI tools: [maciejdzierzek.com/narzedzia](https://maciejdzierzek.com/narzedzia/)
 
 Companion skills: [kling-ai](https://github.com/maciejdzierzek/kling-ai-prompt-generator) (AI video) · [nano-banana](https://github.com/maciejdzierzek/nano-banana-prompt-generator) and [z-image](https://github.com/maciejdzierzek/z-image-prompt-generator) (images)
 
