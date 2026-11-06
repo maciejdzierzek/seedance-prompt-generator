@@ -1,7 +1,7 @@
 {
   "skill": "seedance",
   "description": "Trigger accuracy evaluation for the seedance skill. Each entry is a user prompt that should or should not trigger this skill.",
-  "version": "1.0",
+  "version": "1.1",
   "should_trigger": [
     {
       "query": "Write me a Seedance 2.0 prompt for a three-shot dialogue scene between two people.",
@@ -34,6 +34,18 @@
     {
       "query": "How many reference images should I give dreamina-seedance-2-0-fast?",
       "why": "Limits are 0-9 images but the vendor recommends 4-5 assets total with functional roles."
+    },
+    {
+      "query": "Can Seedance make a single 30-second clip, and is 2.5 available through the API?",
+      "why": "Seedance 2.5 API is live, model ID dreamina-seedance-2-5-260628, 4-30 s, up to 1080p."
+    },
+    {
+      "query": "My Seedance 2.5 edit task fails with InvalidParameter.TaskTypeConstraint.",
+      "why": "Edit is a locked task on 2.5: ratio must be adaptive and duration -1."
+    },
+    {
+      "query": "How much does a 5-second 1080p Seedance clip cost on ModelArk?",
+      "why": "Skill carries the vendor's token rates and published examples: $1.87 on 2.0, $2.843 on 2.5."
     }
   ],
   "should_not_trigger": [

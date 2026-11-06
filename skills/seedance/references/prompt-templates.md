@@ -1,10 +1,10 @@
 # Seedance 2.0 prompt templates
 
-Fill-in templates built on the official formula and sentence patterns. Every template ends with a stability/constraint paragraph - the docs treat those words as necessary configuration, not polish.
+Fill-in templates built on the official 2.0 series formula and sentence patterns. Every template ends with a stability/constraint paragraph - the docs treat those words as necessary configuration, not polish. **For Seedance 2.5 read "Seedance 2.5: what differs" in `SKILL.md` first:** it adds timestamps, fixed parameters for edit and extend, and more assets.
 
 Reminders that apply to all of them:
 - **One camera movement per shot.**
-- **No durations per shot** - precise timing is documented as unstable.
+- **No durations per shot on the 2.0 series** - precise timing is documented as unstable. 2.5 supports timestamps.
 - **Prefer slow, gentle, continuous small movements** over big dynamic action.
 - Symbols: `{ }` dialogue · `< >` sound effect · `（ ）` music · `【 】` subtitles.
 - For **edit** and **extend** tasks say `<Video 1>` / "strictly edit `<Video 1>`" - **never "reference `<Video 1>`"**.
@@ -141,7 +141,7 @@ says in Polish {Dzień dobry}                non-CN/EN dialogue - mark the langu
 
 Keep dialogue in one language per video; do not mix Chinese and English except for proper nouns.
 
-## K. Asset plan (4-5 assets, not the maximum)
+## K. Asset plan on the 2.0 series (4-5 assets, not the maximum)
 
 | Slot | Asset | Purpose |
 |---|---|---|
@@ -151,12 +151,12 @@ Keep dialogue in one language per video; do not mix Chinese and English except f
 | 4 | camera-movement video | shot language and rhythm |
 | 5 | audio clip | emotion, timbre, pace |
 
-Hard limits are 0-9 images, 0-3 videos, 0-3 audio, but the vendor advises against filling them - too many assets and the model cannot prioritise features. "Text + audio" and audio-only inputs are not supported.
+Hard limits on the 2.0 series are 0-9 images, 0-3 videos, 0-3 audio, but the vendor advises against filling them - too many assets and the model cannot prioritise features. "Text + audio" and audio-only inputs are not supported.
 
 ## L. Iteration ladder (spend little until the prompt is right)
 
-1. **Draft mode** or **480p**, shortest usable duration - is the beat readable?
+1. **480p**, shortest usable duration - is the beat readable? On Seedance 2.5 use Draft mode, which is a 480p preview you can promote to a final. The 2.0 series has no Draft mode.
 2. **720p** - do faces hold, does the camera behave?
-3. Final resolution and duration. **4K only on Seedance 2.0**, 10-bit H.265, concurrency 1 - transcode for review.
+3. Final resolution and duration. **4K only on Seedance 2.0**, 10-bit H.265, concurrency 1 - transcode for review. Seedance 2.5 stops at 1080p.
 
-Read the cost the provider actually reports after a real call before extrapolating any budget.
+Read the token count the provider actually reports after a real call before extrapolating any budget.

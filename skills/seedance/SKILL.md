@@ -1,14 +1,14 @@
 ---
 name: seedance
-description: Write and improve prompts for ByteDance Seedance 2.0 video generation, and pick the right variant. Covers the four task types (multimodal reference, video editing, video extension, combined), the shot-by-shot storyboard format the model expects, subject definition and binding to reference assets, the official symbol conventions for dialogue, sound effects, music and subtitles, camera language, constraint words, asset selection strategy, and fixes for character ID drift, unwanted subtitles and style drift.
-when_to_use: Use for anything involving Seedance, Seedance 2.0, Seedance 2.0 Fast, Seedance 2.0 Mini, Seedance 1.5 Pro, Dreamina, ByteDance video generation, ModelArk video models, or the model IDs dreamina-seedance-2-0-* and bytedance/seedance-*. Trigger phrases include "Seedance", "generate a video with audio", "multi-shot AI video", "edit an existing video with AI", "extend this video", "lip sync video", "character keeps changing face in my video", "unwanted subtitles in generated video", "video prompt".
+description: Write and improve prompts for ByteDance Seedance video generation, and pick the right model across Seedance 2.5 and the 2.0 series. Covers the four task types (multimodal reference, video editing, video extension, combined), the shot-by-shot storyboard format the model expects, subject definition and binding to reference assets, the official symbol conventions for dialogue, sound effects, music and subtitles, camera language, constraint words, asset selection strategy, token pricing, and fixes for character ID drift, unwanted subtitles and style drift. Includes what changes on Seedance 2.5 - timestamps, 30-second clips, up to 50 references, locked edit and extension parameters.
+when_to_use: Use for anything involving Seedance, Seedance 2.5, Seedance 2.0, Seedance 2.0 Fast, Seedance 2.0 Mini, Seedance 1.5 Pro, Dreamina, ByteDance video generation, ModelArk video models, or the model IDs dreamina-seedance-2-5-*, dreamina-seedance-2-0-* and bytedance/seedance-*. Trigger phrases include "Seedance", "generate a video with audio", "multi-shot AI video", "30-second AI video", "edit an existing video with AI", "extend this video", "lip sync video", "character keeps changing face in my video", "unwanted subtitles in generated video", "video prompt".
 ---
 
-# Seedance 2.0 Prompting Guide
+# Seedance Prompting Guide (2.0 series, with 2.5 differences)
 
-Seedance 2.0 is ByteDance's video generation family (branded **Dreamina Seedance** on BytePlus ModelArk). It generates **audio and video jointly and natively** - not audio added afterwards - and accepts text, images, video and audio as simultaneous input.
+Seedance is ByteDance's video generation family (branded **Dreamina Seedance** on BytePlus ModelArk). It generates **audio and video jointly and natively** - not audio added afterwards - and accepts text, images, video and audio as simultaneous input.
 
-Facts here are verified against ByteDance's own ModelArk documentation on **2026-08-05**. See "Verification & Sources".
+Facts here are verified against ByteDance's own ModelArk documentation on **2026-11-06**. See "Verification & Sources". The prompt rules in Steps 1-7 are the Seedance 2.0 series rules. **Seedance 2.5 changes several of them** - see "Seedance 2.5: what differs" right after the model table before writing a 2.5 prompt.
 
 **The mental model that makes this work** (from the official guide): Seedance 2.0 is a multimodal director that decomposes your input into a **spatial layer** (what is in the frame) and a **temporal layer** (how things change over time). So a good prompt is *"not simply a copywriting-style description, but an engineering-style instruction"*: who, in what scene, doing what, how the camera moves, and in what order events happen - each delivered to the right layer.
 
@@ -16,26 +16,71 @@ Facts here are verified against ByteDance's own ModelArk documentation on **2026
 
 ## Model lineup
 
-| | **Seedance 2.0** | **Seedance 2.0 Fast** | **Seedance 2.0 Mini** |
-|---|---|---|---|
-| ModelArk model ID | `dreamina-seedance-2-0-260128` | `dreamina-seedance-2-0-fast-260128` | `dreamina-seedance-2-0-mini-260615` |
-| Positioning (vendor's words) | highest generation quality | balance of cost and speed | best cost performance |
-| Resolution | 480p, 720p, 1080p, **4K** | 480p, 720p | 480p, 720p |
-| Aspect ratios | 21:9, 16:9, 4:3, 1:1, 3:4, 9:16 | same | same |
-| Duration | **4-15 s** | 4-15 s | 4-15 s |
-| Text-to-video, image-to-video (first frame, first+last frame) | ✅ | ✅ | ✅ |
-| Multimodal reference (image / video / combined) | ✅ | ✅ | ✅ |
-| Edit video, extend video | ✅ | ✅ | ✅ |
-| Native audio (`generate_audio`) | ✅ | ✅ | ✅ |
-| Draft mode, `return_last_frame`, `service_tier: flex` | ✅ | ✅ | ✅ |
+| | **Seedance 2.5** | **Seedance 2.0** | **Seedance 2.0 Fast** | **Seedance 2.0 Mini** |
+|---|---|---|---|---|
+| ModelArk model ID | `dreamina-seedance-2-5-260628` | `dreamina-seedance-2-0-260128` | `dreamina-seedance-2-0-fast-260128` | `dreamina-seedance-2-0-mini-260615` |
+| Status | **API live** | API live | API live | API live |
+| Positioning (vendor's words) | next-generation: long-form storytelling, omni reference, editing | highest generation quality in the 2.0 series | balance of cost and speed | best cost performance |
+| Resolution | 480p, 720p, 1080p (10-bit) | 480p, 720p, 1080p, **4K** (10-bit) | 480p, 720p | 480p, 720p |
+| Aspect ratios | 21:9, 16:9, 4:3, 1:1, 3:4, 9:16, adaptive | same | same | same |
+| Duration | **4-30 s**, or -1 (model picks) | 4-15 s, or -1 | 4-15 s, or -1 | 4-15 s, or -1 |
+| Frame rate | 24 fps | 24 fps | 24 fps | 24 fps |
+| Output format | mp4, **mov** | mp4 | mp4 | mp4 |
+| Reference assets, maximum | **50** (30 images + 10 videos + 10 audio) | 15 (9 images + 3 videos + 3 audio) | same | same |
+| Text-to-video, first frame, first+last frame | ✅ | ✅ | ✅ | ✅ |
+| Omni reference (image / video / combined) | ✅ | ✅ | ✅ | ✅ |
+| Audio-only reference | ✅ | ❌ needs an image or video | ❌ | ❌ |
+| Edit video, extend video | ✅ | ✅ | ✅ | ✅ |
+| Native audio (`generate_audio`), `return_last_frame` | ✅ | ✅ | ✅ | ✅ |
+| Draft mode | ✅ | ❌ | ❌ | ❌ |
+| Offline inference (`service_tier: flex`) | ❌ | ❌ | ❌ | ❌ |
+| Max RPM / concurrency (individual) | 180 / 3 | 180 / 3, **4K: 15 / 1** | 180 / 3 | 180 / 3 |
+| Max RPM / concurrency (enterprise) | 600 / 10 | 600 / 10, **4K: 15 / 1** | 600 / 10 | 600 / 10 |
 
-**The feature sets are essentially identical.** The three variants differ in quality/cost and in the resolution ceiling. Only **Seedance 2.0** does 4K, and 4K output is **10-bit H.265 (HEVC)** - beautiful gradients, but some players and browsers will not play it back directly, so plan a transcode for review.
+**Which one.** Use **2.5** when you need more than 15 seconds in one generation, timestamp control, more references, an audio-only reference, or `mov` for edit and extension work. Use **2.0** when you need **4K**: 2.5 stops at 1080p. Use **Fast** or **Mini** when cost decides. 2.5 costs about 1.5x the 2.0 token rate; see Cost at the bottom. Fast and Mini share the 2.0 feature set and stop at 720p.
 
-Rate limits are much tighter at 4K: individual users get **15 RPM and concurrency 1** at 4K, versus 180 RPM and concurrency 3 below 4K. A 4K batch is serialised whether you plan for it or not.
+4K on Seedance 2.0 is **10-bit H.265 (HEVC)** - beautiful gradients, but some players and browsers will not play it back directly, so plan a transcode for review. A 4K batch is serialised whether you plan for it or not: concurrency is 1 for every account type.
 
-**Seedance 2.5** has been announced on ModelArk with a model detail page, but Playground and API access were *"available soon"* as of 2026-08-05. Do not build around it yet. **Seedance 1.5 Pro** is the previous generation and has its own separate prompt guide - if a user is on 1.5, the formulas below still broadly apply but check that guide for specifics.
+**Seedance 1.5 Pro** (`seedance-1-5-pro-251215`) is the previous generation and has its own separate prompt guide - if a user is on 1.5, the formulas below still broadly apply but check that guide for specifics.
 
-**Access routes:** BytePlus ModelArk directly (prepaid resource packs required before the models can even be activated), or third-party aggregators which expose their own IDs such as `bytedance/seedance-2.0` and `bytedance/seedance-2.0-fast`. See Cost at the bottom - the two routes bill differently.
+**Access routes:** BytePlus ModelArk directly, or third-party aggregators which expose their own IDs such as `bytedance/seedance-2.0` and `bytedance/seedance-2.0-fast`. To activate the models on ModelArk you need one of: account balance above USD 30, an AI Savings Plan at the USD 30 tier or above, or a resource pack with available quota. See Cost at the bottom - the two routes bill differently.
+
+---
+
+## Seedance 2.5: what differs
+
+The 2.5 prompt guide is a separate document with partly different rules. Where the steps below conflict with this section, this section wins for 2.5. All of it comes from the [2.5 tutorial](https://docs.byteplus.com/en/docs/modelark/seedance-2-5) and [2.5 prompt guide](https://docs.byteplus.com/en/docs/modelark/seedance-2-5-prompt-guide).
+
+**Prompt shape.** The guide frames you as a visual content producer: map the assets, give a one-sentence summary (subject + location + event + genre/style + camera), write the detailed plot by "Shot N" or by timestamps, then add notes on anything that must hold throughout. The tutorial's basic order: subject + action/event + scene and environment + visual style + camera movement/shot cuts + sound.
+
+**Timestamps work.** The vendor's comparison is explicit: 2.0 does not respond to timestamps, 2.5 supports integer seconds. Supported forms: intervals (`0-3 seconds ... 3-7 seconds`, `[1s-4s]`), time points (`at the 5-second mark`), relative time (`after 3 seconds`). Keep the timeline continuous with no gaps, and balance the load: too little in a range and the model improvises, too much and it cuts hard or drops plot. Do not use timestamps for high-frequency actions.
+
+**Actions.** The advice flips from 2.0: prefer general descriptions and write specifics only for a few memorable actions. Use descriptive sentences for expressions rather than idioms. Avoid intense emotional language: words like "fanatical" can make pupils glow, and the fix is neutral wording plus "normal human eyes; no glowing eyes".
+
+**Locked versus unlocked tasks.** Some tasks take their format from the input, and breaking that returns an error (`InvalidParameter.TaskTypeConstraint`, or `InvalidParameter.TaskTypeMismatch` when the model reads the task differently from what you declared):
+
+| Task | `ratio` | `duration` | Prompt must contain | Notes |
+|---|---|---|---|---|
+| Edit | `adaptive` | `-1` | edit video, add, insert, remove, delete, modify, replace, change to | Input video 4-30 s, best under 20 s. Output keeps its ratio and length, up to about 0.4 s shorter. Prefer `output_format: mov` |
+| Extend | `adaptive` | 4-30 or `-1` | extend forward, extend backward, continue, continue from, extend the story | Use `mov` for both input and output for the best continuity |
+| First frame, first+last frame | `adaptive` | 4-30 or `-1` | - | Set `content.role` to `first_frame` / `last_frame`. Use the same ratio for both, or the last frame gets stretched |
+| Reference, storyboard, keyframes | free | free | - | The input is a semantic reference only |
+
+Set `omni_reference_task_type` to `edit` or `extend` to validate early instead of failing after the task starts; `auto` lets the model classify from the prompt.
+
+**Flexible ratio.** 2.0 has six fixed output ratios. 2.5 can produce any ratio between 0.4 and 2.5 by controlling the input assets.
+
+**Mapping many assets.** Number assets by upload order and bind each one in the prompt text: "Images 1-2 are Character 1 and correspond to Audio 1". Say what each asset provides and what it should not. Do not rely on a name written inside the image. If characters swap, upload references in the order subjects first appear. Multi-view subject images are supported for 1-5 subjects, unlike 2.0. Vendor guidance: 1-8 subjects from images, 1-5 from audio or video with 5-10 s clips.
+
+**Storyboards versus keyframes.** A multi-panel storyboard is a plot reference, not a frame-accurate one: 15 panels at most, simple line art, no text on it. For strict alignment use keyframes: separate images, opening with "Use Images 1 to 7 in order as keyframes."
+
+**Negatives.** Prefer positive description. Negative control is supported for subtitles and audio: "no subtitles", "no BGM". If music still appears, enumerate the terms (music, BGM, score, instrumental, melody) and repeat the constraint at the start and end of the prompt.
+
+**Other documented fixes.** Subtitles triggered by dialogue: use `Character's line (emotion): content` and do not repeat words after a line. Misspelled on-screen text: spell it letter by letter, or supply the text as an image reference. Fingerprint-like textures on foliage: resize reference images so they do not exceed the output resolution. Mixing 2.0 and 2.5 footage: the aesthetics differ visibly, so use a 2.0 clip as input to a 2.5 extension with `mov` output.
+
+**Languages.** Native generation in 11: Chinese, English, Spanish, Indonesian, Malay, Thai, Arabic, Portuguese, Vietnamese, Japanese, Korean. **Polish is not listed.** The tutorial recommends stating the language before any non-Chinese dialogue.
+
+**Real faces.** Neither 2.5 nor the 2.0 series accepts directly uploaded reference images or video containing real human faces. The vendor's routes are trusted outputs from your own account, preset digital characters, and authorized real-person assets ([guide](https://docs.byteplus.com/en/docs/modelark/seedance-portrait-asset-guide)).
 
 ---
 
@@ -44,6 +89,8 @@ Rate limits are much tighter at 4K: individual users get **15 RPM and concurrenc
 Reference-based generation splits into three tasks plus combinations, and **each has its own official sentence pattern**. Using the wrong one is the most common structural mistake.
 
 ### Multimodal reference - build a new video from elements of your assets
+
+The docs now call this task **omni reference**, and the API roles are `reference_image`, `reference_video`, `reference_audio`.
 
 Use for action transfer, subject reuse, atmosphere reference.
 
@@ -134,7 +181,7 @@ Organise **each** shot in this order:
 3. **Position or spatial change** - where the subject is, how that changes
 4. **Audio** - sound effects, voices, background music for that shot
 
-**Do not assign durations to shots.** The docs are explicit: support for precise timing such as "0-3 seconds" is **unstable, and forcing it may produce abnormal results**. Let pacing follow the plot. Order shots primary-first.
+**Do not assign durations to shots on the 2.0 series.** The docs are explicit: support for precise timing such as "0-3 seconds" is **unstable, and forcing it may produce abnormal results**. (2.5 supports timestamps.) Let pacing follow the plot. Order shots primary-first.
 
 ---
 
@@ -213,7 +260,7 @@ Text rendered **on screen** (ad slogans, subtitles, speech bubbles) is supported
 
 ## Asset strategy: fewer than you are allowed
 
-Hard input limits: **0-9 images, 0-3 videos, 0-3 audio files**. Also: **"text + audio" and "audio-only" inputs are not supported** - if you pass audio, pass an image or video with it.
+Hard input limits on the 2.0 series: **0-9 images, 0-3 videos, 0-3 audio files**. Also: **"text + audio" and "audio-only" inputs are not supported** - if you pass audio, pass an image or video with it. (2.5 raises these to 30 + 10 + 10 and accepts audio-only references.)
 
 But the vendor's own recommendation is to use far fewer. Assets fall into four functional roles:
 
@@ -276,7 +323,7 @@ Fix:
 2. **Split the roles in the prompt:** `<Subject 1> facial features reference image 1 (headshot), makeup and styling reference image 2 (full-body photo)`.
 3. **Put the face reference first.**
 
-⚠️ **Do not use multi-view character sheets.** The docs specifically advise against them: different angles of one character are easily read as **several different subjects**, which makes ID drift worse. Headshot + full body is enough.
+⚠️ **Do not use multi-view character sheets on the 2.0 series.** The docs specifically advise against them: different angles of one character are easily read as **several different subjects**, which makes ID drift worse. Headshot + full body is enough. (2.5 supports multi-view subject images.)
 
 ### Unwanted subtitles
 
@@ -301,33 +348,63 @@ Known issue, fixed in post for now. The documented recipe: at each join, **trim 
 
 ## Cost: why a per-clip price you read somewhere is not your bill
 
-Seedance is billed by the provider, and the charge depends on the **model variant, resolution, duration, aspect ratio and whether audio is generated** - all of which you set per request. A headline "$X per clip" figure is a base rate for one specific configuration.
+Seedance is billed per token, and the charge depends on the **model, resolution, duration, aspect ratio and whether the input contains video** - all of which you set per request. A headline "$X per clip" figure is one specific configuration.
 
-- **ModelArk** requires **prepaid resource packs** before the models can be activated at all, and offers an offline/cheaper path via `service_tier: "flex"` plus a **draft mode** for iteration.
+**ModelArk token rates, USD per 1M tokens, online inference** ([pricing](https://docs.byteplus.com/en/docs/modelark/model-pricing), checked 2026-11-06):
+
+| Model | No video input, 480p/720p | No video input, 1080p | No video input, 4K | Video input, 480p/720p | Video input, 1080p | Video input, 4K |
+|---|---|---|---|---|---|---|
+| `dreamina-seedance-2-5-260628` | $10.70 | $11.70 | - | $6.40 | $7.00 | - |
+| `dreamina-seedance-2-0-260128` | $7.00 | $7.70 | $4.00 | $4.30 | $4.70 | $2.40 |
+| `dreamina-seedance-2-0-fast-260128` | $5.60 | - | - | $3.30 | - | - |
+| `dreamina-seedance-2-0-mini-260615` | $3.50 | - | - | $2.10 | - | - |
+
+Offline inference is not available for any of these.
+
+**Tokens:** (input video duration + output video duration) × output width × output height × frame rate / 1024. The rate with video input is lower, but input seconds count towards tokens, so the video still costs more: the vendor states this directly. A minimum token consumption also applies whenever the input includes video.
+
+**Published examples, 5-second 16:9 output, no video input:**
+
+| Model | 480p | 720p | 1080p | 4K |
+|---|---|---|---|---|
+| Seedance 2.5 | $0.514 | $1.156 | $2.843 | - |
+| Seedance 2.0 | $0.35 | $0.76 | $1.87 | $3.89 |
+| Seedance 2.0 Fast | $0.28 | $0.60 | - | - |
+| Seedance 2.0 Mini | $0.18 | $0.38 | - | - |
+
+With video input, the same 5-second output on 2.5 runs $0.553-$2.152 at 480p, $1.244-$4.838 at 720p and $3.062-$11.907 at 1080p, depending on input length (2-30 s). Only successful generations are charged. Actual consumption is `usage.completion_tokens` in the response.
+
+- **Draft mode exists on Seedance 2.5 only** among these models: a 480p preview at the normal 480p rate, whose task ID then generates the final video (valid 14 days). The 2.0 series has no Draft mode, so iterate there at 480p.
 - **Aggregators** set their own prices and may not expose video pricing in their API metadata at all. Their model list endpoint may also omit video models unless you filter for video output explicitly.
 
-Practical rule: **iterate in draft mode or at 480p/720p, read the actual cost field the provider returns after a real call, and only then extrapolate a budget.** A single measurement at one configuration is not a price list - and a model with a lower headline rate can end up costing more than a pricier one once resolution and duration are set.
+Practical rule: **iterate at 480p or 720p, read the actual token count after a real call, and only then extrapolate a budget.** On aggregators a model with a lower headline rate can end up costing more than a pricier one once resolution and duration are set.
 
 ---
 
 ## Verification & Sources
 
-Verified **2026-08-05** against ByteDance/BytePlus-controlled documentation:
+Verified **2026-11-06** against ByteDance/BytePlus-controlled documentation:
 
-- **Seedance 2.0 series prompt guide** (the primary source for everything above): https://docs.byteplus.com/en/docs/ModelArk/2222480
-- **Seedance 2.0 series tutorial** (model IDs, capability matrix, resolutions, ratios, durations, asset limits, rate limits, 4K notes): https://docs.byteplus.com/en/docs/ModelArk/2291680
+- **Seedance 2.5 tutorial** (model ID, capability table, task constraints, usage limits; updated 2026-10-28): https://docs.byteplus.com/en/docs/modelark/seedance-2-5
+- **Seedance 2.5 prompt guide** (locked/unlocked tasks, timestamps, differences from 2.0, FAQ; updated 2026-10-16): https://docs.byteplus.com/en/docs/modelark/seedance-2-5-prompt-guide
+- **Seedance 2.0 series prompt guide** (the primary source for Steps 1-7; updated 2026-09-28): https://docs.byteplus.com/en/docs/modelark/seedance-2-0-prompt-guide
+- **Seedance 2.0 series tutorial** (model IDs, capability matrix, asset limits, rate limits, 4K notes; updated 2026-11-05): https://docs.byteplus.com/en/docs/modelark/seedance-2-0
+- **Model list** (IDs, outputs, rate limits; updated 2026-11-03): https://docs.byteplus.com/en/docs/modelark/model-list
+- **Pricing** (token rates, formula, examples; updated 2026-10-23): https://docs.byteplus.com/en/docs/modelark/model-pricing
+- **Portrait assets guide**: https://docs.byteplus.com/en/docs/modelark/seedance-portrait-asset-guide
 - **Lens language reference** (camera vocabulary; documented for the Seedance 1.0 Pro generation and linked from the 2.0 guide): https://docs.byteplus.com/en/docs/ModelArk/1631633
 - **Seedance 1.5 Pro prompt guide** (previous generation): https://docs.byteplus.com/en/docs/ModelArk/2168087
 - **Official product site:** https://seed.bytedance.com
 
-These pages are JavaScript-rendered; a plain fetch returns an empty shell. Use a headless browser to re-verify.
+These pages are JavaScript-rendered; a plain fetch returns an empty shell. Use a headless browser, and wait on `domcontentloaded` plus a fixed delay: the pages never reach network idle, so a `networkidle` wait times out. Pricing tabs must be clicked to reveal the "Input with video" rates. ByteDance also publishes its own prompt-optimisation skills, `sd25-pe` for 2.5 and `sd2-pe` for 2.0.
 
 **Deliberately not claimed here:**
-- Any specific per-second or per-clip price. Pricing is provider-specific and configuration-dependent; the docs gate ModelArk access behind resource packs whose rates are on a separate page.
-- A lip-sync language count. Native audio and lip-sync are documented capabilities, and the docs give a rule for marking non-Chinese/English dialogue, but no supported-language list is published in these pages.
-- Availability of Seedance 2.5 - announced with a model detail page, but Playground and API were "available soon" as of 2026-08-05.
+- The date Seedance 2.5 opened. The docs show the API as live but give no release date, and `260628` in the ID is not one.
+- Prices on aggregators or on resource packs. The rates above are ModelArk list rates.
+- A lip-sync language list for the 2.0 series. Native audio and lip-sync are documented, and the docs give a rule for marking non-Chinese/English dialogue, but no supported-language list is published in those pages. The 11-language list applies to 2.5.
+- Polish lip-sync on any Seedance model.
 - Benchmark comparisons against other video models.
-- Exact per-shot duration control - explicitly documented as unstable.
-- Any claim that subtitles, logos or watermarks can be fully prevented. The docs say probability can only be reduced.
+- Exact per-shot duration control on the 2.0 series - explicitly documented as unstable.
+- Any claim that subtitles, logos or watermarks can be fully prevented. The docs say probability can only be reduced, on 2.5 as well.
 
 If you find a claim above is wrong, fix it here and in the body section, with the source URL and the date you checked.

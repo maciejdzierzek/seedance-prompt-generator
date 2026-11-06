@@ -1,6 +1,6 @@
 # Seedance Prompt Generator - Claude Skill
 
-> A Claude skill for writing prompts for **ByteDance Seedance 2.0** video generation.
+> A Claude skill for writing prompts for **ByteDance Seedance** video generation: 2.5 and the 2.0 series.
 > Works with Claude.ai, Claude Desktop, and Claude Code.
 
 [![Live Generator](https://img.shields.io/badge/Live_Generator-maciejdzierzek.com-blue)](https://maciejdzierzek.com/narzedzia/generator-promptow/?model=seedance)
@@ -33,7 +33,7 @@ Both examples are from the official prompt guide.
 
 ## What the skill covers
 
-- **Model lineup** - Seedance 2.0 / Fast / Mini with model IDs, resolutions, ratios, the 4-15s duration range, and the fact that only Seedance 2.0 does 4K (10-bit H.265, concurrency 1)
+- **Model lineup** - Seedance 2.5, 2.0, 2.0 Fast and 2.0 Mini with model IDs, resolutions, ratios, the 4-15s duration range, and the fact that only Seedance 2.0 does 4K (10-bit H.265, concurrency 1)
 - **Four task types with their own sentence patterns** - multimodal reference, video editing, video extension, combined. Including the gotcha that saying "reference `<Video 1>`" on an *edit* job silently turns it into a reference job
 - **The official advanced formula** and the per-shot ordering: camera move → action and expression → position → audio
 - **Subject definition and binding** - `Define [features] in <Image 1> as <Subject 1>`, `Subject@Image 1`, and why an Asset ID must never appear in the prompt
